@@ -29,13 +29,13 @@ public class StudentController {
     }
 
     @PostMapping
-    public Student createStudent(@RequestBody Student student) {
-        return studentService.addStudent(student);
+    public ResponseEntity<Student> createStudent(@RequestBody Student student) {
+        return ResponseEntity.ok(studentService.addStudent(student));
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<Student> editStudent(@RequestBody Student student, @PathVariable long id) {
-        Student studentEdit = studentService.editStudent(id, student);
+    @PutMapping
+    public ResponseEntity<Student> editStudent(@RequestBody Student student) {
+        Student studentEdit = studentService.editStudent(student);
         if (studentEdit == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -43,12 +43,18 @@ public class StudentController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Student> deleteStudent(@PathVariable long id) {
-        return ResponseEntity.ok(studentService.deleteStudent(id));
+    public ResponseEntity<Void> deleteStudent(@PathVariable long id) {
+        studentService.deleteStudent(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping
     public ResponseEntity<Collection<Student>> findByAge(@RequestParam int age) {
         return ResponseEntity.ok(studentService.findByAge(age));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<Collection<Student>> getAll() {
+        return ResponseEntity.ok(studentService.getAllStudents());
     }
 }

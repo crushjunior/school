@@ -27,13 +27,13 @@ public class FacultyController {
     }
 
     @PostMapping
-    public Faculty createFaculty(@RequestBody Faculty faculty) {
-        return facultyService.addFaculty(faculty);
+    public ResponseEntity<Faculty> createFaculty(@RequestBody Faculty faculty) {
+        return ResponseEntity.ok(facultyService.addFaculty(faculty));
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<Faculty> editFaculty(@RequestBody Faculty faculty, @PathVariable long id) {
-        Faculty editFaculty = facultyService.editFaculty(id, faculty);
+    @PutMapping
+    public ResponseEntity<Faculty> editFaculty(@RequestBody Faculty faculty) {
+        Faculty editFaculty = facultyService.editFaculty(faculty);
         if (editFaculty == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -41,12 +41,18 @@ public class FacultyController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Faculty> deleteFaculty(@PathVariable long id) {
-        return ResponseEntity.ok(facultyService.deleteFaculty(id));
+    public ResponseEntity<Void> deleteFaculty(@PathVariable long id) {
+        facultyService.deleteFaculty(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping
     public ResponseEntity<Collection<Faculty>> findByColor(@RequestParam String color) {
         return ResponseEntity.ok(facultyService.findByColor(color));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<Collection<Faculty>> getAll() {
+        return ResponseEntity.ok(facultyService.getAllFaculties());
     }
 }
