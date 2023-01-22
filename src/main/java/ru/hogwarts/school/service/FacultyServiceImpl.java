@@ -43,6 +43,22 @@ public class FacultyServiceImpl implements FacultyService {
         return facultyRepository.findFacultiesByColor(color);
     }
 
+    @Override
+    public Collection<Faculty> getAllFaculties() {
+        return facultyRepository.findAll();
+    }
+
+    public Faculty findByColorOrName(String color, String name) {
+        return facultyRepository.findFacultyByColorIgnoreCaseOrNameIgnoreCase(color, name);
+    }
+
+    public Faculty findFacultyByStudentId(long id) {
+        return facultyRepository.findFacultyByStudentsId(id);
+    }
+
+
+
+
 //    @Override
 //    public Collection<Faculty> findByColor(String color) {
 //        List<Faculty> sortedFaculties = new ArrayList<>();
@@ -52,14 +68,5 @@ public class FacultyServiceImpl implements FacultyService {
 //            }
 //        }
 //        return sortedFaculties;
-//    }
-
-    @Override
-    public Collection<Faculty> getAllFaculties() {
-        return facultyRepository.findAll();
-    }
-
-//    public Faculty findByColorOrName(String color, String name) {
-//        return facultyRepository.findFacultyByColorIgnoreCaseOrNameIgnoreCase(color, name);
 //    }
 }

@@ -51,17 +51,22 @@ public class FacultyController {
         return ResponseEntity.ok(facultyService.findByColor(color));
     }
 
-    @GetMapping("/all")
-   public ResponseEntity<Collection<Faculty>> getAll() {
-       return ResponseEntity.ok(facultyService.getAllFaculties());
+    @GetMapping("/allAndNameColor")
+    public ResponseEntity findFacultyByColorOrName(@RequestParam(required = false) String color, @RequestParam(required = false) String name) {
+       if (color != null && !color.isBlank() || name != null && !name.isBlank()) {
+           return ResponseEntity.ok(facultyService.findByColorOrName(color, name));
+       }
+        return ResponseEntity.ok(facultyService.getAllFaculties());
+    }
+
+    @GetMapping("facultyByStudent/{id}")
+    public ResponseEntity<Faculty> findFacultyByStudent(@PathVariable long id) {
+        return ResponseEntity.ok(facultyService.findFacultyByStudentId(id));
     }
 
 
-//    @GetMapping("/allAndNameColor")
-//    public ResponseEntity findStudents(@RequestParam(required = false) String color, @RequestParam(required = false) String name) {
-//        if (color != null && !color.isBlank() || name != null && !name.isBlank()) {
-//            return ResponseEntity.ok(facultyService.findByColorOrName(color, name));
-//        }
-//        return ResponseEntity.ok(facultyService.getAllFaculties());
+    //    @GetMapping("/all")
+//   public ResponseEntity<Collection<Faculty>> getAll() {
+//       return ResponseEntity.ok(facultyService.getAllFaculties());
 //    }
 }

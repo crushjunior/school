@@ -43,7 +43,23 @@ private final StudentRepository studentRepository;
     public Collection<Student> findByAge(int age) {
         return studentRepository.findStudentsByAge(age);
     }
-//    @Override
+
+    @Override
+    public Collection<Student> getAllStudents() {
+        return studentRepository.findAll();
+    }
+
+    public Collection<Student> getAgeBetween(int min, int max) {
+        return studentRepository.findStudentsByAgeBetween(min, max);
+    }
+
+    public Collection<Student> findStudentsByFacultyId(long id) {
+        return studentRepository.findStudentsByFacultyId(id);
+    }
+
+
+
+    //    @Override
 //    public Collection<Student> findByAge(int age) {
 //        List<Student> sortedStudents = new ArrayList<>();
 //        for (Student student : studentRepository.findAll()) {
@@ -52,19 +68,5 @@ private final StudentRepository studentRepository;
 //            }
 //        }
 //        return sortedStudents;
-//    }
-
-    @Override
-    public Collection<Student> getAllStudents() {
-        return studentRepository.findAll();
-    }
-
-//    public Collection<Student> getAgeBetween(int min, int max) {
-//        return studentRepository.findStudentsByAgeBetween(min, max);
-//    }
-
-//    public Faculty findFacultyByStudent(long id) {
-//        Student foundStudent = studentRepository.getById(id);
-//        return foundStudent.getFaculty();
 //    }
 }
