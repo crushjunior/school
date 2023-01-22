@@ -39,21 +39,27 @@ public class FacultyServiceImpl implements FacultyService {
         facultyRepository.deleteById(id);
     }
 
-    @Override
     public Collection<Faculty> findByColor(String color) {
-        List<Faculty> sortedFaculties = new ArrayList<>();
-        for (Faculty faculty : facultyRepository.findAll()) {
-            if (faculty.getColor().equals(color)) {
-                sortedFaculties.add(faculty);
-            }
-        }
-        return sortedFaculties;
+        return facultyRepository.findFacultiesByColor(color);
     }
+
+//    @Override
+//    public Collection<Faculty> findByColor(String color) {
+//        List<Faculty> sortedFaculties = new ArrayList<>();
+//        for (Faculty faculty : facultyRepository.findAll()) {
+//            if (faculty.getColor().equals(color)) {
+//                sortedFaculties.add(faculty);
+//            }
+//        }
+//        return sortedFaculties;
+//    }
 
     @Override
     public Collection<Faculty> getAllFaculties() {
         return facultyRepository.findAll();
     }
 
-
+//    public Faculty findByColorOrName(String color, String name) {
+//        return facultyRepository.findFacultyByColorIgnoreCaseOrNameIgnoreCase(color, name);
+//    }
 }

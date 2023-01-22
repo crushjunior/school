@@ -52,7 +52,16 @@ public class FacultyController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Collection<Faculty>> getAll() {
-        return ResponseEntity.ok(facultyService.getAllFaculties());
+   public ResponseEntity<Collection<Faculty>> getAll() {
+       return ResponseEntity.ok(facultyService.getAllFaculties());
     }
+
+
+//    @GetMapping("/allAndNameColor")
+//    public ResponseEntity findStudents(@RequestParam(required = false) String color, @RequestParam(required = false) String name) {
+//        if (color != null && !color.isBlank() || name != null && !name.isBlank()) {
+//            return ResponseEntity.ok(facultyService.findByColorOrName(color, name));
+//        }
+//        return ResponseEntity.ok(facultyService.getAllFaculties());
+//    }
 }

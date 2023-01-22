@@ -2,6 +2,7 @@ package ru.hogwarts.school.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
@@ -39,19 +40,31 @@ private final StudentRepository studentRepository;
         studentRepository.deleteById(id);
     }
 
-    @Override
     public Collection<Student> findByAge(int age) {
-        List<Student> sortedStudents = new ArrayList<>();
-        for (Student student : studentRepository.findAll()) {
-            if (student.getAge() == age) {
-                sortedStudents.add(student);
-            }
-        }
-        return sortedStudents;
+        return studentRepository.findStudentsByAge(age);
     }
+//    @Override
+//    public Collection<Student> findByAge(int age) {
+//        List<Student> sortedStudents = new ArrayList<>();
+//        for (Student student : studentRepository.findAll()) {
+//            if (student.getAge() == age) {
+//                sortedStudents.add(student);
+//            }
+//        }
+//        return sortedStudents;
+//    }
 
     @Override
     public Collection<Student> getAllStudents() {
         return studentRepository.findAll();
     }
+
+//    public Collection<Student> getAgeBetween(int min, int max) {
+//        return studentRepository.findStudentsByAgeBetween(min, max);
+//    }
+
+//    public Faculty findFacultyByStudent(long id) {
+//        Student foundStudent = studentRepository.getById(id);
+//        return foundStudent.getFaculty();
+//    }
 }

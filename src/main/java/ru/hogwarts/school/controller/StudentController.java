@@ -3,6 +3,7 @@ package ru.hogwarts.school.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentServiceImpl;
 
@@ -57,4 +58,15 @@ public class StudentController {
     public ResponseEntity<Collection<Student>> getAll() {
         return ResponseEntity.ok(studentService.getAllStudents());
     }
+
+//    @GetMapping("/between")
+//    public ResponseEntity<Collection<Student>> findByAgeBetween(@RequestParam int min, @RequestParam int max) {
+//        return ResponseEntity.ok(studentService.getAgeBetween(min, max));
+//    }
+
+//    @GetMapping("/faculty")
+//    public ResponseEntity<Faculty> getFacultyByStudent(@RequestParam long id) {
+//        return ResponseEntity.ok(studentService.findFacultyByStudent(id));
+//    }
+
 }
