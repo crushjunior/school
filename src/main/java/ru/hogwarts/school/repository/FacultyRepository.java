@@ -10,5 +10,5 @@ public interface FacultyRepository extends JpaRepository<Faculty, Long> {
 
     Collection<Faculty> findFacultiesByColor(String color);
 
-    Faculty findFacultyByStudentsId(long id);
+//    Faculty findFacultyByStudentsId(long id);
 }

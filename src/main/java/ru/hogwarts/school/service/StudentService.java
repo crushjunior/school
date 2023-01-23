@@ -16,6 +16,8 @@ public interface StudentService {
 
     public Collection<Student> getAllStudents();
 
+    public Faculty getFacultyByStudentId(long id);
+
 
 
     //    public Collection<Student> findByAge(int age);

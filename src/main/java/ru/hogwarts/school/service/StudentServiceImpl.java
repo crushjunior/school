@@ -49,13 +49,19 @@ private final StudentRepository studentRepository;
         return studentRepository.findAll();
     }
 
+    @Override
+    public Faculty getFacultyByStudentId(long id) {
+        Student foundStudent = studentRepository.findById(id).get();
+        return foundStudent.getFaculty();
+    }
+
     public Collection<Student> getAgeBetween(int min, int max) {
         return studentRepository.findStudentsByAgeBetween(min, max);
     }
 
-    public Collection<Student> findStudentsByFacultyId(long id) {
-        return studentRepository.findStudentsByFacultyId(id);
-    }
+//    public Collection<Student> findStudentsByFacultyId(long id) {
+//        return studentRepository.findStudentsByFacultyId(id);
+//    }
 
 
 

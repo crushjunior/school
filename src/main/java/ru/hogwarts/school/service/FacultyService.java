@@ -1,6 +1,7 @@
 package ru.hogwarts.school.service;
 
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 
 import java.util.Collection;
 
@@ -14,6 +15,8 @@ public interface FacultyService {
     public void deleteFaculty(long id);
 
     public Collection<Faculty> getAllFaculties();
+
+    public Collection<Student> getStudentsByFacultyId(long id);
 
 
 

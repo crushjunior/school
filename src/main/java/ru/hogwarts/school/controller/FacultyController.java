@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyServiceImpl;
 
 import java.util.Collection;
@@ -59,10 +60,15 @@ public class FacultyController {
         return ResponseEntity.ok(facultyService.getAllFaculties());
     }
 
-    @GetMapping("facultyByStudent/{id}")
-    public ResponseEntity<Faculty> findFacultyByStudent(@PathVariable long id) {
-        return ResponseEntity.ok(facultyService.findFacultyByStudentId(id));
+    @GetMapping("studentsByFaculty/{id}")
+    public ResponseEntity<Collection<Student>> findStudentsByFacultyId(@PathVariable long id) {
+        return ResponseEntity.ok(facultyService.getStudentsByFacultyId(id));
     }
+
+//    @GetMapping("studentsByFaculty/{id}")
+//    public ResponseEntity<Collection<Student>> findStudentsByFacultyId(@PathVariable long id) {
+//        return ResponseEntity.ok(studentService.findStudentsByFacultyId(id));
+//    }
 
 
     //    @GetMapping("/all")
