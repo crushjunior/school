@@ -109,13 +109,20 @@ public class StudentTests {
         Faculty faculty = new Faculty(1L, "asda", "wweew");
         student.setFaculty(faculty);
 
+        restTemplate.postForEntity(getUriBuilder2().build().toUri(), faculty, Faculty.class);
         whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student);
+
+        URI getUri = getUriBuilder2().path("/{id}").buildAndExpand(faculty.getId()).toUri();
+        ResponseEntity<Faculty> response = restTemplate.getForEntity(getUri, Faculty.class);
+
+        Assertions.assertThat(response.getBody()).isNotNull();
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         thenFacultyOfStudentWasFound(student, faculty);
     }
 
     private void thenFacultyOfStudentWasFound(Student student, Faculty faculty) {
-        URI uri = getUriBuilder().cloneBuilder().path("facultyByStudent/{id}").buildAndExpand(student.getId()).toUri();
+        URI uri = getUriBuilder().path("facultyByStudent/{id}").buildAndExpand(student.getId()).toUri();
         ResponseEntity<Faculty> foundFaculty = restTemplate.getForEntity(uri, Faculty.class);
 
         Assertions.assertThat(foundFaculty.getBody()).isNotNull();
@@ -207,6 +214,14 @@ public class StudentTests {
                 .host("localhost")
                 .port(port)
                 .path("/student");
+    }
+
+    private UriComponentsBuilder getUriBuilder2() {
+        return UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host("localhost")
+                .port(port)
+                .path("/faculty");
     }
 
     private Student givenStudent(Long id, String name, int age) {
