@@ -17,6 +17,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 import ru.hogwarts.school.controller.StudentController;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 
 import java.net.URI;
@@ -26,7 +27,7 @@ import java.util.Set;
 
 import static javax.xml.xpath.XPathFactory.newInstance;
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD) // с помощью этой аннтоации данные в БД будут обнуляться после каждого теста
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StudentTests {
     @LocalServerPort
@@ -77,11 +78,97 @@ public class StudentTests {
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("min", "20");
         queryParams.add("max", "25");
-        thenStudentsAreFoundByAge(queryParams, student20, student21);
+        thenStudentsAreFoundByAgeForBetween(queryParams, student20, student21);
+    }
+
+    @Test
+    public void testUpdate() {
+        Student student = givenStudent(1L, "Rob", 19);
+        ResponseEntity<Student> responseEntity = whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student);
+        thenStudentHasBeenCreated(responseEntity);
+        Student createdStudent = responseEntity.getBody();
+
+        whenUpdatingStudent(createdStudent, 29, "Zohan");
+        thenStudentHasBeenUpdated(createdStudent, 29, "Zohan");
+    }
+
+    @Test
+    public void testDelete() {
+        Student student = givenStudent(1L, "Rob", 19);
+        ResponseEntity<Student> responseEntity = whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student);
+        thenStudentHasBeenCreated(responseEntity);
+        Student createdStudent = responseEntity.getBody();
+
+        whenDeletingStudent(createdStudent);
+        thenStudentNotFound(createdStudent);
+    }
+
+    @Test
+    public void findFacultyByStudentId() {
+        Student student = givenStudent(1L, "Rob", 19);
+        Faculty faculty = new Faculty(1L, "asda", "wweew");
+        student.setFaculty(faculty);
+
+        whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student);
+
+        thenFacultyOfStudentWasFound(student, faculty);
+    }
+
+    private void thenFacultyOfStudentWasFound(Student student, Faculty faculty) {
+        URI uri = getUriBuilder().cloneBuilder().path("facultyByStudent/{id}").buildAndExpand(student.getId()).toUri();
+        ResponseEntity<Faculty> foundFaculty = restTemplate.getForEntity(uri, Faculty.class);
+
+        Assertions.assertThat(foundFaculty.getBody()).isNotNull();
+        Assertions.assertThat(foundFaculty.getStatusCode()).isEqualTo(HttpStatus.OK);
+//        Assertions.assertThat(foundFaculty.getBody()).isEqualTo(faculty);
+    }
+
+    private void thenStudentNotFound(Student createdStudent) {
+        URI getUri = getUriBuilder().path("{id}").buildAndExpand(createdStudent.getId()).toUri();
+        ResponseEntity<Student> emptyStudent = restTemplate.getForEntity(getUri, Student.class);
+
+        Assertions.assertThat(emptyStudent.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    private void whenDeletingStudent(Student createdStudent) {
+        restTemplate.delete(getUriBuilder().path("{id}").buildAndExpand(createdStudent.getId()).toUri());
+    }
+
+    private void thenStudentHasBeenUpdated(Student createdStudent, int newAge, String newName) {
+        URI getUri = getUriBuilder().cloneBuilder().path("/{id}").buildAndExpand(createdStudent.getId()).toUri();
+        ResponseEntity<Student> updatedStudent = restTemplate.getForEntity(getUri, Student.class);
+
+        Assertions.assertThat(updatedStudent.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(updatedStudent.getBody()).isNotNull();
+        Assertions.assertThat(updatedStudent.getBody().getAge()).isEqualTo(newAge);
+        Assertions.assertThat(updatedStudent.getBody().getName()).isEqualTo(newName);
+    }
+
+    private void whenUpdatingStudent(Student student, int newAge, String newName) {
+        student.setAge(newAge);
+        student.setName(newName);
+        restTemplate.put(getUriBuilder().build().toUri(), student);
     }
 
     private void thenStudentsAreFoundByAge(MultiValueMap<String, String> queryParams, Student... students) {
         URI uri = getUriBuilder().queryParams(queryParams).build().toUri();
+        ResponseEntity<Set<Student>> response = restTemplate.exchange(
+                uri,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<Set<Student>>() {
+                });
+
+        Assertions.assertThat(response.getBody()).isNotNull();
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        Set<Student> result = response.getBody();
+        //resetIds(result);
+        Assertions.assertThat(result).containsExactlyInAnyOrder(students);
+    }
+
+    private void thenStudentsAreFoundByAgeForBetween(MultiValueMap<String, String> queryParams, Student... students) {
+        URI uri = getUriBuilder().path("/between").queryParams(queryParams).build().toUri();
         ResponseEntity<Set<Student>> response = restTemplate.exchange(
                 uri,
                 HttpMethod.GET,
