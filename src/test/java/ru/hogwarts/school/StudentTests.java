@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -104,30 +105,53 @@ public class StudentTests {
     }
 
     @Test
+    public void findAllStudents() {
+        Student student19 = givenStudent(1L, "Rob", 19);
+        Student student20 = givenStudent(2L, "Bor", 20);
+        Student student21 = givenStudent(3L, "Sam", 21);
+        whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student19);
+        whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student20);
+        whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student21);
+
+        thenAllStudentsAreFound(student19, student20, student21);
+    }
+
+
+
+    @Test
     public void findFacultyByStudentId() {
         Student student = givenStudent(1L, "Rob", 19);
         Faculty faculty = new Faculty(1L, "asda", "wweew");
         student.setFaculty(faculty);
 
-        restTemplate.postForEntity(getUriBuilder2().build().toUri(), faculty, Faculty.class);
+//        whenSendingCreateFacultyRequest(getUriBuilder2().build().toUri(), faculty); //ЭТОТ метод с getBuilder2 для создании в БД факультета. Думал, что нужно добавть ещё факультет в БД
         whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student);
-
-        URI getUri = getUriBuilder2().path("/{id}").buildAndExpand(faculty.getId()).toUri();
-        ResponseEntity<Faculty> response = restTemplate.getForEntity(getUri, Faculty.class);
-
-        Assertions.assertThat(response.getBody()).isNotNull();
-        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         thenFacultyOfStudentWasFound(student, faculty);
     }
 
     private void thenFacultyOfStudentWasFound(Student student, Faculty faculty) {
-        URI uri = getUriBuilder().path("facultyByStudent/{id}").buildAndExpand(student.getId()).toUri();
+        URI uri = getUriBuilder().path("/facultyByStudent/{id}").buildAndExpand(student.getId()).toUri(); // тут ведь правильный эндпоинт
         ResponseEntity<Faculty> foundFaculty = restTemplate.getForEntity(uri, Faculty.class);
 
-        Assertions.assertThat(foundFaculty.getBody()).isNotNull();
-        Assertions.assertThat(foundFaculty.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        Assertions.assertThat(foundFaculty.getBody()).isEqualTo(faculty);
+        Assertions.assertThat(foundFaculty.getStatusCode()).isEqualTo(HttpStatus.OK); // это проходит
+        Assertions.assertThat(foundFaculty.getBody()).isEqualTo(faculty); // а здесь якобы actual = null
+    }
+
+    private void thenAllStudentsAreFound(Student... students) {
+        URI uri = getUriBuilder().path("/all").build().toUri();
+        ResponseEntity<Set<Student>> response = restTemplate.exchange(
+                uri,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<Set<Student>>() {
+                });
+
+        Assertions.assertThat(response.getBody()).isNotNull();
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        Set<Student> result = response.getBody();
+        Assertions.assertThat(result).containsExactlyInAnyOrder(students);
     }
 
     private void thenStudentNotFound(Student createdStudent) {
@@ -216,13 +240,13 @@ public class StudentTests {
                 .path("/student");
     }
 
-    private UriComponentsBuilder getUriBuilder2() {
-        return UriComponentsBuilder.newInstance()
-                .scheme("http")
-                .host("localhost")
-                .port(port)
-                .path("/faculty");
-    }
+//    private UriComponentsBuilder getUriBuilder2() {
+//        return UriComponentsBuilder.newInstance()
+//                .scheme("http")
+//                .host("localhost")
+//                .port(port)
+//                .path("/faculty");
+//    }
 
     private Student givenStudent(Long id, String name, int age) {
         return new Student(id, name, age);
@@ -231,6 +255,9 @@ public class StudentTests {
     private ResponseEntity<Student> whenSendingCreateStudentRequest(URI uri, Student student) {
         return restTemplate.postForEntity(uri, student, Student.class);
     }
+//    private ResponseEntity<Faculty> whenSendingCreateFacultyRequest(URI uri, Faculty faculty) {
+//        return restTemplate.postForEntity(uri, faculty, Faculty.class);
+//    }
 
 //    @Autowired
 //    private StudentController studentController;
