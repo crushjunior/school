@@ -37,6 +37,9 @@ public class StudentTests {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    @Autowired
+    private StudentController studentController;
+
     @Test
     public void createStudent() {
         Student student = givenStudent(1L, "Rob", 19);
@@ -120,14 +123,22 @@ public class StudentTests {
 
     @Test
     public void findFacultyByStudentId() {
-        Student student = givenStudent(1L, "Rob", 19);
-        Faculty faculty = new Faculty(1L, "asda", "wweew");
-        student.setFaculty(faculty);
+        Student studentRq = givenStudent(0L, "Rob", 19);
+        Faculty facultyRq = new Faculty(0L, "asda", "wweew");
 
-//        whenSendingCreateFacultyRequest(getUriBuilder2().build().toUri(), faculty); //ЭТОТ метод с getBuilder2 для создании в БД факультета. Думал, что нужно добавть ещё факультет в БД
-        whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student);
+        // создаем факультет и получаем тот, что пришел в ответе, т.к. id может быть другим
+        Faculty createdFaculty = whenSendingCreateFacultyRequest(getUriBuilder2().build().toUri(), facultyRq).getBody();
 
-        thenFacultyOfStudentWasFound(student, faculty);
+
+        // сеттим факультет в студента
+        studentRq.setFaculty(createdFaculty);
+
+        // создаем студента через контроллер
+        Student createdStudent = studentController.createStudent(studentRq).getBody();
+
+        // выполняем проверки
+        thenFacultyOfStudentWasFound(createdStudent, createdFaculty);
+
     }
 
     private void thenFacultyOfStudentWasFound(Student student, Faculty faculty) {
@@ -240,13 +251,13 @@ public class StudentTests {
                 .path("/student");
     }
 
-//    private UriComponentsBuilder getUriBuilder2() {
-//        return UriComponentsBuilder.newInstance()
-//                .scheme("http")
-//                .host("localhost")
-//                .port(port)
-//                .path("/faculty");
-//    }
+    private UriComponentsBuilder getUriBuilder2() {
+        return UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host("localhost")
+                .port(port)
+                .path("/faculty");
+    }
 
     private Student givenStudent(Long id, String name, int age) {
         return new Student(id, name, age);
@@ -255,9 +266,9 @@ public class StudentTests {
     private ResponseEntity<Student> whenSendingCreateStudentRequest(URI uri, Student student) {
         return restTemplate.postForEntity(uri, student, Student.class);
     }
-//    private ResponseEntity<Faculty> whenSendingCreateFacultyRequest(URI uri, Faculty faculty) {
-//        return restTemplate.postForEntity(uri, faculty, Faculty.class);
-//    }
+    private ResponseEntity<Faculty> whenSendingCreateFacultyRequest(URI uri, Faculty faculty) {
+        return restTemplate.postForEntity(uri, faculty, Faculty.class);
+    }
 
 //    @Autowired
 //    private StudentController studentController;
