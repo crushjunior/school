@@ -71,6 +71,11 @@ private final StudentRepository studentRepository;
     public Collection<Student> get5LastStudents() {
         return studentRepository.get5LastStudents();
     }
+
+    public Collection<Student> getStudentsByName(String name) {
+        return studentRepository.getStudentsByNameIgnoreCase(name);
+    }
+
 //    public Collection<Student> findStudentsByFacultyId(long id) {
 //        return studentRepository.findStudentsByFacultyId(id);
 //    }

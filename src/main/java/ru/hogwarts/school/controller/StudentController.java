@@ -83,4 +83,10 @@ public class StudentController {
     public ResponseEntity<Collection<Student>> get5LastStudents() {
         return ResponseEntity.ok(studentService.get5LastStudents());
     }
+
+    @GetMapping("students-by-name/{name}")
+    public ResponseEntity<Collection<Student>> getStudentsByName(@PathVariable String name) {
+        return ResponseEntity.ok(studentService.getStudentsByName(name));
+    }
+
 }
