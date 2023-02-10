@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 @Service
 @Transactional
 public class AvatarServiceImpl implements AvatarService {
+    Logger logger = LoggerFactory.getLogger(StudentServiceImpl.class);
     @Value("${path.to.avatars.folder}")
     private String avatarsDir;
 
@@ -37,6 +40,7 @@ public class AvatarServiceImpl implements AvatarService {
 
     @Override
     public void uploadAvatar(Long studentId, MultipartFile avatarFile) throws IOException {
+        logger.info("Was invoked method for create avatar");
         Student student = studentRepository.getById(studentId);
         Path filePath = Path.of(avatarsDir, student + "." + getExtensions(avatarFile.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
@@ -55,6 +59,7 @@ public class AvatarServiceImpl implements AvatarService {
         avatar.setFileSize(avatarFile.getSize());
         avatar.setMediaType(avatarFile.getContentType());
         avatar.setData(generateDataForDB(filePath));
+        logger.debug("User created avatar with file path: {}", avatar.getFilePath());
         avatarRepository.save(avatar);
     }
 
@@ -81,12 +86,17 @@ public class AvatarServiceImpl implements AvatarService {
 
     @Override
     public Avatar findAvatar(Long studentId) {
-        return avatarRepository.findByStudentId(studentId).orElse(new Avatar());
+        logger.info("Was invoked method for find avatar");
+        Avatar avatar = avatarRepository.findByStudentId(studentId).orElse(new Avatar());
+        logger.debug("User find avatar with file path: {}", avatar.getFilePath());
+        return avatar;
     }
 
     @Override
     public Collection<Avatar> getAll(Integer pageNumber, Integer pageSize) {
+        logger.info("Was invoked method for get all avatars");
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
+        logger.debug("User get all avatars");
         return avatarRepository.findAll(pageRequest).getContent();
     }
 }

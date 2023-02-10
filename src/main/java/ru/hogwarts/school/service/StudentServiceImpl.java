@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
@@ -13,6 +15,9 @@ import java.util.List;
 
 @Service
 public class StudentServiceImpl implements StudentService{
+
+    Logger logger = LoggerFactory.getLogger(StudentServiceImpl.class);
+
 private final StudentRepository studentRepository;
 
     public StudentServiceImpl(StudentRepository studentRepository) {
@@ -22,58 +27,92 @@ private final StudentRepository studentRepository;
 
     @Override
     public Student addStudent(Student student) {
-        return studentRepository.save(student);
+        logger.info("Was invoked method for add student");
+        Student newStudent = studentRepository.save(student);
+        logger.debug("{} was added to application", newStudent);
+        return newStudent;
     }
 
     @Override
     public Student findStudent(long id) {
-        return studentRepository.findById(id).get();
+        logger.info("Was invoked method for find student");
+        Student student = studentRepository.findById(id).get();
+        logger.debug("User want to find student: {}", student);
+        return student;
     }
 
     @Override
     public Student editStudent(Student student) {
-        return studentRepository.save(student);
+        logger.info("Was invoked method for edit student");
+        Student editStudent = studentRepository.save(student);
+        logger.debug("User want to edit student: {}", editStudent);
+        return editStudent;
     }
 
     @Override
     public void deleteStudent(long id) {
+        logger.info("Was invoked method for delete student");
+        logger.debug("User want to delete {} ", studentRepository.findById(id));
         studentRepository.deleteById(id);
     }
 
     public Collection<Student> findByAge(int age) {
-        return studentRepository.findStudentsByAge(age);
+        logger.info("Was invoked method for find students by age");
+        Collection<Student> students = studentRepository.findStudentsByAge(age);
+        logger.debug("User want to find students with {}: {}", age, students);
+        return students;
     }
 
     @Override
     public Collection<Student> getAllStudents() {
-        return studentRepository.findAll();
+        logger.info("Was invoked method for get all students");
+        Collection<Student> students = studentRepository.findAll();
+        logger.debug("User want to get all students: {}", students);
+        return students;
     }
 
     @Override
     public Faculty getFacultyByStudentId(long id) {
-        Student foundStudent = studentRepository.findById(id).get();
-        return foundStudent.getFaculty();
+        logger.info("Was invoked method for get faculty by student");
+        Faculty foundFaculty = studentRepository.findById(id).get().getFaculty();
+        logger.debug("User want to get faculty by student: {}", foundFaculty);
+        return foundFaculty;
     }
 
     public Collection<Student> getAgeBetween(int min, int max) {
-        return studentRepository.findStudentsByAgeBetween(min, max);
+        logger.info("Was invoked method for find students by age between");
+        Collection<Student> students = studentRepository.findStudentsByAgeBetween(min, max);
+        logger.debug("User want to get students: {}", students);
+        return students;
     }
 
     public Integer getCountOfStudents() {
-        return studentRepository.getCountOfAllStudents();
+        logger.info("Was invoked method for get count of students");
+        Integer count = studentRepository.getCountOfAllStudents();
+        logger.debug("User want to get count of students: {}", count);
+        return count;
     }
 
 
     public Double getAvgOfAge() {
-        return studentRepository.getAvgAgeOfStudents();
+        logger.info("Was invoked method for get average of student's age");
+        Double count = studentRepository.getAvgAgeOfStudents();
+        logger.debug("User want to get average of student's age: {}", count);
+        return count;
     }
 
     public Collection<Student> get5LastStudents() {
-        return studentRepository.get5LastStudents();
+        logger.info("Was invoked method for get 5 last students");
+        Collection<Student> students = studentRepository.get5LastStudents();
+        logger.debug("User want to get 5 last students: {}", students);
+        return students;
     }
 
     public Collection<Student> getStudentsByName(String name) {
-        return studentRepository.getStudentsByNameIgnoreCase(name);
+        logger.info("Was invoked method for get students by name");
+        Collection<Student> students = studentRepository.getStudentsByNameIgnoreCase(name);
+        logger.debug("User want to get students by name: {}", students);
+        return students;
     }
 
 //    public Collection<Student> findStudentsByFacultyId(long id) {

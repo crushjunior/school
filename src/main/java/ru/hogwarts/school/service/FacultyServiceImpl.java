@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
@@ -13,6 +15,8 @@ import java.util.List;
 
 @Service
 public class FacultyServiceImpl implements FacultyService {
+
+    Logger logger = LoggerFactory.getLogger(FacultyServiceImpl.class);
     private final FacultyRepository facultyRepository;
 
     public FacultyServiceImpl(FacultyRepository facultyRepository) {
@@ -22,41 +26,63 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public Faculty addFaculty(Faculty faculty) {
-        return facultyRepository.save(faculty);
+        logger.info("Was invoked method for add faculty");
+        Faculty newFaculty = facultyRepository.save(faculty);
+        logger.debug("{} was added to application", newFaculty);
+        return newFaculty;
     }
 
     @Override
     public Faculty findFaculty(long id) {
-        return facultyRepository.findById(id).get();
+        logger.info("Was invoked method for find faculty");
+        Faculty foundFaculty = facultyRepository.findById(id).get();
+        logger.debug("User want to find by id {} ", foundFaculty);
+        return foundFaculty;
     }
 
     @Override
     public Faculty editFaculty(Faculty faculty) {
-        return facultyRepository.save(faculty);
+        logger.info("Was invoked method for edit faculty");
+        Faculty editFaculty = facultyRepository.save(faculty);
+        logger.debug("User want to edit {} ", editFaculty);
+        return editFaculty;
     }
 
     @Override
     public void deleteFaculty(long id) {
+        logger.info("Was invoked method for delete faculty");
+        logger.debug("User want to delete {} ", facultyRepository.findById(id));
         facultyRepository.deleteById(id);
     }
 
     public Collection<Faculty> findByColor(String color) {
-        return facultyRepository.findFacultiesByColor(color);
+        logger.info("Was invoked method for find faculties by color");
+        Collection<Faculty> foundFaculties = facultyRepository.findFacultiesByColor(color);
+        logger.debug("User want to find these faculties: {} ", foundFaculties);
+        return foundFaculties;
     }
 
     @Override
     public Collection<Faculty> getAllFaculties() {
-        return facultyRepository.findAll();
+        logger.info("Was invoked method for get all faculties");
+        Collection<Faculty> foundFaculties = facultyRepository.findAll();
+        logger.debug("User want to get all faculties: {} ", foundFaculties);
+        return foundFaculties;
     }
 
     @Override
     public Collection<Student> getStudentsByFacultyId(long id) {
-        Faculty foundFaculty = facultyRepository.findById(id).get();
-        return foundFaculty.getStudents();
+        logger.info("Was invoked method for get students by faculty");
+        Collection<Student> studentsOfFaculty = facultyRepository.findById(id).get().getStudents();
+        logger.debug("User want to get all students of {}: {} ", facultyRepository.findById(id), studentsOfFaculty);
+        return studentsOfFaculty;
     }
 
     public Faculty findByColorOrName(String color, String name) {
-        return facultyRepository.findFacultyByColorIgnoreCaseOrNameIgnoreCase(color, name);
+        logger.info("Was invoked method for get faculty by color or name");
+        Faculty faculty = facultyRepository.findFacultyByColorIgnoreCaseOrNameIgnoreCase(color, name);;
+        logger.debug("User want to get faculty: {} ", faculty);
+        return faculty;
     }
 
 //    public Faculty findFacultyByStudentId(long id) {
