@@ -54,15 +54,20 @@ public class FacultyController {
 
     @GetMapping("/allAndNameColor")
     public ResponseEntity findFacultyByColorOrName(@RequestParam(required = false) String color, @RequestParam(required = false) String name) {
-       if (color != null && !color.isBlank() || name != null && !name.isBlank()) {
-           return ResponseEntity.ok(facultyService.findByColorOrName(color, name));
-       }
+        if (color != null && !color.isBlank() || name != null && !name.isBlank()) {
+            return ResponseEntity.ok(facultyService.findByColorOrName(color, name));
+        }
         return ResponseEntity.ok(facultyService.getAllFaculties());
     }
 
     @GetMapping("studentsByFaculty/{id}")
     public ResponseEntity<Collection<Student>> findStudentsByFacultyId(@PathVariable long id) {
         return ResponseEntity.ok(facultyService.getStudentsByFacultyId(id));
+    }
+
+    @GetMapping("the-longest-faculty-name")
+    public ResponseEntity<String> findLongestNameOfFaculties() {
+        return ResponseEntity.ok(facultyService.findLongestNameOfFaculties());
     }
 
 //    @GetMapping("studentsByFaculty/{id}")

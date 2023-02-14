@@ -8,10 +8,7 @@ import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class FacultyServiceImpl implements FacultyService {
@@ -80,9 +77,16 @@ public class FacultyServiceImpl implements FacultyService {
 
     public Faculty findByColorOrName(String color, String name) {
         logger.info("Was invoked method for get faculty by color or name");
-        Faculty faculty = facultyRepository.findFacultyByColorIgnoreCaseOrNameIgnoreCase(color, name);;
+        Faculty faculty = facultyRepository.findFacultyByColorIgnoreCaseOrNameIgnoreCase(color, name);
         logger.debug("User want to get faculty: {} ", faculty);
         return faculty;
+    }
+
+    public String findLongestNameOfFaculties() {
+        return facultyRepository.findAll().stream()
+                .map(Faculty::getName)
+                .max(Comparator.comparingInt(String::length))
+                .orElse("Not found");
     }
 
 //    public Faculty findFacultyByStudentId(long id) {
