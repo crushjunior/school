@@ -70,6 +70,11 @@ public class FacultyController {
         return ResponseEntity.ok(facultyService.findLongestNameOfFaculties());
     }
 
+    @GetMapping("parallel-test")
+    public ResponseEntity<Integer> testParallel() {
+        return ResponseEntity.ok(facultyService.testParallelStream());
+    }
+
 //    @GetMapping("studentsByFaculty/{id}")
 //    public ResponseEntity<Collection<Student>> findStudentsByFacultyId(@PathVariable long id) {
 //        return ResponseEntity.ok(studentService.findStudentsByFacultyId(id));
