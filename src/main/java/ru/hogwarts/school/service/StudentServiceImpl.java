@@ -114,6 +114,7 @@ private final StudentRepository studentRepository;
     }
 
     public List<String> getStudentsByNameStartA() {
+        logger.info("Was invoked method for get average of student's age");
         return studentRepository.findAll().stream()
                 .map(Student::getName)
                 .filter(w -> w.startsWith("А"))
@@ -121,6 +122,16 @@ private final StudentRepository studentRepository;
                 .map(String::toUpperCase)
                 .collect(Collectors.toList());
     }
+
+    public Double getAvgOfStudentsAge() {
+        logger.info("Was invoked method for get average of student's age by stream API");
+        return studentRepository.findAll().stream()
+                .map(Student::getAge)
+                .mapToDouble(v -> v.doubleValue())
+                .average()
+                .orElse(0.0);
+    }
+
 
 //    public Collection<Student> findStudentsByFacultyId(long id) {
 //        return studentRepository.findStudentsByFacultyId(id);

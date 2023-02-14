@@ -94,4 +94,9 @@ public class StudentController {
     public ResponseEntity<List<String>> getStudentsByNameStartA() {
         return ResponseEntity.ok(studentService.getStudentsByNameStartA());
     }
+
+    @GetMapping("avg-age-students")
+    public ResponseEntity<Double> getAvgOfAgeStudents() {
+        return ResponseEntity.ok(studentService.getAvgOfStudentsAge());
+    }
 }
