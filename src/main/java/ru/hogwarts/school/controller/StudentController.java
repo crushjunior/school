@@ -99,4 +99,9 @@ public class StudentController {
     public ResponseEntity<Double> getAvgOfAgeStudents() {
         return ResponseEntity.ok(studentService.getAvgOfStudentsAge());
     }
+
+    @GetMapping("get-students-not-sync")
+    public void getAllStudentsForConsoleNotSync() {
+        studentService.getAllStudentsForConsoleNotSync();
+    }
 }

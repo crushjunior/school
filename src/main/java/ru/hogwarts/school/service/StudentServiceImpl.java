@@ -132,6 +132,22 @@ private final StudentRepository studentRepository;
                 .orElse(0.0);
     }
 
+    public void getAllStudentsForConsoleNotSync() {
+        System.out.println(studentRepository.findAll().get(0));
+        System.out.println(studentRepository.findAll().get(1));
+
+        new Thread(() -> {
+            System.out.println(studentRepository.findAll().get(2));
+            System.out.println(studentRepository.findAll().get(3));
+        } ).start();
+
+        new Thread(() -> {
+            System.out.println(studentRepository.findAll().get(4));
+            System.out.println(studentRepository.findAll().get(5));
+        } ).start();
+
+    }
+
 
 //    public Collection<Student> findStudentsByFacultyId(long id) {
 //        return studentRepository.findStudentsByFacultyId(id);
