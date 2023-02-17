@@ -23,6 +23,7 @@ private final StudentRepository studentRepository;
     }
 
 
+
     @Override
     public Student addStudent(Student student) {
         logger.info("Was invoked method for add student");
@@ -144,6 +145,27 @@ private final StudentRepository studentRepository;
         new Thread(() -> {
             System.out.println(studentRepository.findAll().get(4));
             System.out.println(studentRepository.findAll().get(5));
+        } ).start();
+
+    }
+
+    public void getAllStudentsForConsoleSync() {
+
+        System.out.println(studentRepository.findAll().get(0));
+        System.out.println(studentRepository.findAll().get(1));
+
+        new Thread(() -> {
+            synchronized (StudentServiceImpl.class) {
+                System.out.println(studentRepository.findAll().get(2));
+                System.out.println(studentRepository.findAll().get(3));
+            }
+        } ).start();
+
+        new Thread(() -> {
+            synchronized (StudentServiceImpl.class) {
+                System.out.println(studentRepository.findAll().get(4));
+                System.out.println(studentRepository.findAll().get(5));
+            }
         } ).start();
 
     }

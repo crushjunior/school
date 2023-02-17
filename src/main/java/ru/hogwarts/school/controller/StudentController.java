@@ -104,4 +104,9 @@ public class StudentController {
     public void getAllStudentsForConsoleNotSync() {
         studentService.getAllStudentsForConsoleNotSync();
     }
+
+    @GetMapping("get-students-with-sync")
+    public void getAllStudentsForConsoleSync() {
+        studentService.getAllStudentsForConsoleSync();
+    }
 }
